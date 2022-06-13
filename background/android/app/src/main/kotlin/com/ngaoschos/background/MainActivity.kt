@@ -25,6 +25,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
+import android.graphics.BitmapFactory
+
+
+
 
 
 class MainActivity: FlutterFragmentActivity() {
@@ -48,12 +52,15 @@ class MainActivity: FlutterFragmentActivity() {
                     }
                     channelFetchImage -> {
                         val index = (call.arguments as? Int) ?: 0
-                        dataForGalleryItem(index) { data, id, created, location ->
+                        dataForGalleryItem(index) { data, id, created, location , width, height, filePath ->
                             result.success(mapOf<String, Any>(
                                     "data" to data,
                                     "id" to id,
                                     "created" to created,
-                                    "location" to location
+                                    "location" to location,
+                                    "width" to width,
+                                    "height" to height,
+                                    "filePath" to filePath
                             ))
                         }
                     }
@@ -89,7 +96,7 @@ class MainActivity: FlutterFragmentActivity() {
             }
 
 
-    private fun dataForGalleryItem(index: Int, completion: (ByteArray, String, Int, String) -> Unit) {
+    private fun dataForGalleryItem(index: Int, completion: (ByteArray, String, Int, String,Int,Int,String ) -> Unit) {
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val orderBy = MediaStore.Images.Media.DATE_TAKEN
 
@@ -105,18 +112,22 @@ class MainActivity: FlutterFragmentActivity() {
 
             val id = getString(idIndex)
             val filePath = getString(dataIndex)
-
             val file = File(filePath)
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeFile(file.absolutePath, options)
+            val imageHeight = options.outHeight
+            val imageWidth = options.outWidth
             val bmp = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id.toLong(), MediaStore.Images.Thumbnails.MINI_KIND, null)
             val stream = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
             val data = stream.toByteArray()
 
             val created = getInt(createdIndex)
             val latitude = getDouble(latitudeIndex)
             val longitude = getDouble(longitudeIndex)
 
-            completion(data, id, created, "$latitude, $longitude")
+            completion(data, id, created, "$latitude, $longitude",imageWidth,imageHeight,filePath)
         }
     }
 
@@ -125,7 +136,7 @@ class MainActivity: FlutterFragmentActivity() {
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.LATITUDE,
-            MediaStore.Images.Media.LONGITUDE)
+            MediaStore.Images.Media.LONGITUDE,)
 
 
     private fun getGalleryImageCount(): Int {

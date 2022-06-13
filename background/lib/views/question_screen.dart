@@ -114,11 +114,11 @@ class _ItemQuestionViewState extends State<_ItemQuestionView> {
       child: Stack(
         children: [
           Positioned(
-            top: 16,
-            right: 16,
-            left: 16,
-            bottom: 16,
-            child: Column(
+            top: 8,
+            right: 8,
+            left: 8,
+            bottom: 8,
+            child:  Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

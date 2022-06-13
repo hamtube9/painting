@@ -34,6 +34,9 @@ class _ImageScreenState extends State<ImageScreen> {
                 widget.totalImage,
                 (index) => ImageWidget(
                       index: index,
+                      pickImage: (data) {
+                        Navigator.of(context).pop(data);
+                      },
                     ))),
       ),
     );
@@ -42,8 +45,9 @@ class _ImageScreenState extends State<ImageScreen> {
 
 class ImageWidget extends StatefulWidget {
   final int index;
+  final Function(LocalImage) pickImage;
 
-  const ImageWidget({Key? key, required this.index}) : super(key: key);
+  const ImageWidget({Key? key, required this.index, required this.pickImage}) : super(key: key);
 
   @override
   State<ImageWidget> createState() => _ImageWidgetState();
@@ -63,7 +67,9 @@ class _ImageWidgetState extends State<ImageWidget> {
               builder: (context, snapshot) {
                 LocalImage? item = snapshot.data as LocalImage?;
                 if (item != null) {
-                  return Image.memory(item.bytes!, fit: BoxFit.cover);
+                  return GestureDetector(
+                      onTap: () => widget.pickImage(item),
+                      child: Image.memory(item.bytes!, fit: BoxFit.cover));
                 }
 
                 return Container();
@@ -83,7 +89,10 @@ class _ImageWidgetState extends State<ImageWidget> {
           bytes: item['data'],
           id: item['id'],
           dateCreated: item['created'],
-          location: item['location']);
+          location: item['location'],
+          width: item['width'],
+          height: item['height'],
+          filePath: item['filePath']);
 
       _itemCache[index] = galleryImage;
 

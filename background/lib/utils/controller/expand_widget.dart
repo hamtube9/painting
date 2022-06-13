@@ -13,7 +13,7 @@ class ExpandableWidget extends StatefulWidget {
     required this.child,
     this.height = 80,
     required this.maxHeight ,
-    this.dividerHeight = 6,
+    this.dividerHeight = 8,
     this.dividerSpace = 2, required this.click,
   }) : super(key: key);
 
