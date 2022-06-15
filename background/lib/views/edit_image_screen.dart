@@ -8,7 +8,6 @@ import 'package:background/model/item_widget/item_widget.dart';
 import 'package:background/model/local_image.dart';
 import 'package:background/services/pick_image_services.dart';
 import 'package:background/utils/controller/list_color.dart';
-import 'package:background/utils/controller/resize_widget.dart';
 import 'package:background/utils/styles/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -490,6 +489,8 @@ class _ItemTextFieldState extends State<_ItemTextField> {
   String text = "";
   int line = 1;
   Matrix4? matrix = Matrix4.identity();
+  final GlobalKey key = GlobalKey();
+  Size? _size;
 
   @override
   void initState() {
@@ -533,23 +534,28 @@ class _ItemTextFieldState extends State<_ItemTextField> {
               child: MatrixGestureDetector(
                 onMatrixUpdate:
                     (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                      var s =  MatrixUtils
+                          .transformRect(matrix, key.currentContext!
+                          .findRenderObject()!
+                          .paintBounds);
                   setState(() {
                     this.matrix = matrix;
+                    _size = s.size;
                   });
-                  // final GlobalKey key = widget.key;
-                  // MatrixUtils
-                  //     .transformRect(matrix, widget.key!.currentContext!
-                  //     .findRenderObject()
-                  //     .paintBounds)
-                  //     .size
+
+                  // print(s.size);
+                  print(s.size);
                 },
-                child: widget.isSelected
-                    ? Container(
+                child: Container(
+                  key: key,
+                  decoration: BoxDecoration(
+                    color: text.isEmpty ?  Colors.black.withOpacity(0.6) : Colors.transparent,
+                  ),
                   height: line > 1 ? 30.0 * line : 40,
                   width: text.isEmpty
                       ? 60.0
                       : (text.length * 6 > size.width ? size.width : text.length * 6),
-                  child: TextField(
+                  child:  widget.isSelected ?TextField(
                     keyboardType: TextInputType.multiline,
                     maxLength: null,
                     maxLines: line,
@@ -559,7 +565,7 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                       setState(() {
                         text = s;
                       });
-                      if (text.length * 5 >= size.width) {
+                      if (text.length * 7 >= size.width/2) {
                         String t = "";
                         var list = text.split(' ').toList();
                         for (var i = 0; i < list.length; i++) {
@@ -570,36 +576,25 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                           }
                         }
                         setState(() {
-                          line = t.length * 5 ~/ size.width <= 1
+                          line = t.length * 7 ~/ size.width <= 1
                               ? 1
-                              : t.length * 5 ~/ size.width;
+                              : t.length * 7 ~/ size.width;
                         });
                       }
                     },
                     decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:   BorderSide(color: Colors.transparent),
-                        ), ),
+                      contentPadding: EdgeInsets.all(10),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:   BorderSide(color: Colors.transparent),
+                      ), ),
                     style: const TextStyle(
                         fontFamily: 'SFProDisplay',
                         color: Colors.black
                     ),
-                  ),
-                )
-                    : Container(
-                  decoration: BoxDecoration(
-                    color: text.isEmpty ?  Colors.black.withOpacity(0.6) : Colors.transparent,
-                  ),
-                  height: line > 1 ? 22.0 * line : 40,
-                  width: text.isEmpty
-                      ? 60.0
-                      : (text.length * 4 > size.width ? size.width : text.length * 4),
-                  alignment: Alignment.center,
-                  child: Text(
+                  ) : Text(
                     text,
                     style: const TextStyle(fontFamily: 'SFProDisplay'),
                   ),
