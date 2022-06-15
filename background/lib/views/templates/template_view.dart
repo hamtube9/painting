@@ -1,4 +1,3 @@
-
 import 'package:background/utils/styles/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,9 +25,9 @@ class TemplatesViewState extends State<TemplatesView> {
           children: [
             Expanded(
                 child: Text(
-                  widget.titleTemplate,
-                  style: AppTextStyle.styleHeadline(),
-                )),
+              widget.titleTemplate,
+              style: AppTextStyle.styleHeadline(),
+            )),
             TextButton.icon(
               onPressed: () => widget.templateOnClick(),
               icon: Text(
@@ -70,12 +69,12 @@ class TemplatesViewState extends State<TemplatesView> {
             bottom: 0,
             child: widget.items != null
                 ? Container(
-              alignment: Alignment.center,
-              child: SvgPicture.asset(
-                widget.items![index],
-                fit: BoxFit.cover,
-              ),
-            )
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      widget.items![index],
+                      fit: BoxFit.cover,
+                    ),
+                  )
                 : Container(),
           ),
           Positioned(
@@ -83,14 +82,14 @@ class TemplatesViewState extends State<TemplatesView> {
             left: 8,
             child: index > 1
                 ? Container(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24), color: const Color(0xff6F90B4)),
-              child: Text(
-                'Pro',
-                style: AppTextStyle.styleCaption2(textColor: Colors.white),
-              ),
-            )
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24), color: const Color(0xff6F90B4)),
+                    child: Text(
+                      'Pro',
+                      style: AppTextStyle.styleCaption2(textColor: Colors.white),
+                    ),
+                  )
                 : Container(),
           )
         ],
@@ -129,9 +128,9 @@ class TemplatesFlexibleViewState extends State<TemplatesFlexibleView> {
           children: [
             Expanded(
                 child: Text(
-                  widget.titleTemplate,
-                  style: AppTextStyle.styleHeadline(),
-                )),
+              widget.titleTemplate,
+              style: AppTextStyle.styleHeadline(),
+            )),
             TextButton.icon(
               onPressed: () => widget.templateOnClick(),
               icon: Text(
@@ -166,36 +165,36 @@ class TemplatesFlexibleViewState extends State<TemplatesFlexibleView> {
         children: [
           Expanded(
               child: Stack(
-                children: [
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-                    child: Image.asset(
-                      img[index],
-                      fit: BoxFit.fitWidth,
-                      alignment: Alignment.bottomCenter,
-                    ),
-                  ),
-                  index > 1
-                      ? Positioned(
-                    top: 4,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: const Color(0xff6F90B4)),
-                      child: Text(
-                        'Pro',
-                        style: AppTextStyle.styleCaption2(textColor: Colors.white),
+            children: [
+              Positioned(
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                child: Image.asset(
+                  img[index],
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.bottomCenter,
+                ),
+              ),
+              index > 1
+                  ? Positioned(
+                      top: 4,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            color: const Color(0xff6F90B4)),
+                        child: Text(
+                          'Pro',
+                          style: AppTextStyle.styleCaption2(textColor: Colors.white),
+                        ),
                       ),
-                    ),
-                  )
-                      : Container()
-                ],
-              )),
+                    )
+                  : Container()
+            ],
+          )),
           Text(
             "Instagram Stories",
             style: AppTextStyle.styleCaption2(),
@@ -229,9 +228,9 @@ class TemplatesBlackFridayViewState extends State<TemplatesBlackFridayView> {
           children: [
             Expanded(
                 child: Text(
-                  widget.titleTemplate,
-                  style: AppTextStyle.styleHeadline(),
-                )),
+              widget.titleTemplate,
+              style: AppTextStyle.styleHeadline(),
+            )),
             TextButton.icon(
               onPressed: () => widget.templateOnClick(),
               icon: Text(
@@ -263,7 +262,7 @@ class TemplatesBlackFridayViewState extends State<TemplatesBlackFridayView> {
       margin: const EdgeInsets.fromLTRB(0, 0, 8, 0),
       width: 100,
       color: Colors.grey,
-      child:Stack(
+      child: Stack(
         children: [
           Positioned(
             top: 0,
@@ -283,27 +282,24 @@ class TemplatesBlackFridayViewState extends State<TemplatesBlackFridayView> {
           ),
           index > 1
               ? Positioned(
-            top: 4,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: const Color(0xff6F90B4)),
-              child: Text(
-                'Pro',
-                style: AppTextStyle.styleCaption2(textColor: Colors.white),
-              ),
-            ),
-          )
+                  top: 4,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24), color: const Color(0xff6F90B4)),
+                    child: Text(
+                      'Pro',
+                      style: AppTextStyle.styleCaption2(textColor: Colors.white),
+                    ),
+                  ),
+                )
               : Container()
         ],
       ),
     );
   }
 }
-
-
 
 class TemplatesFashionView extends StatefulWidget {
   final String titleTemplate;
@@ -328,9 +324,9 @@ class TemplatesFashionViewState extends State<TemplatesFashionView> {
           children: [
             Expanded(
                 child: Text(
-                  widget.titleTemplate,
-                  style: AppTextStyle.styleHeadline(),
-                )),
+              widget.titleTemplate,
+              style: AppTextStyle.styleHeadline(),
+            )),
             TextButton.icon(
               onPressed: () => widget.templateOnClick(),
               icon: Text(
@@ -362,7 +358,7 @@ class TemplatesFashionViewState extends State<TemplatesFashionView> {
       margin: const EdgeInsets.fromLTRB(0, 0, 8, 0),
       width: 100,
       color: Colors.grey,
-      child:Stack(
+      child: Stack(
         children: [
           Positioned(
             top: 0,
@@ -373,19 +369,18 @@ class TemplatesFashionViewState extends State<TemplatesFashionView> {
           ),
           index > 1
               ? Positioned(
-            top: 4,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: const Color(0xff6F90B4)),
-              child: Text(
-                'Pro',
-                style: AppTextStyle.styleCaption2(textColor: Colors.white),
-              ),
-            ),
-          )
+                  top: 4,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24), color: const Color(0xff6F90B4)),
+                    child: Text(
+                      'Pro',
+                      style: AppTextStyle.styleCaption2(textColor: Colors.white),
+                    ),
+                  ),
+                )
               : Container()
         ],
       ),

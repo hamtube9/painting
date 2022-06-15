@@ -107,7 +107,7 @@ class _TemplateScreenState extends State<TemplateScreen> {
                 ),
               ),
               TemplatesBlackFridayView(
-                templateOnClick: () {},
+                templateOnClick: () => _editBlackFridayTemplate(),
                 titleTemplate: 'Black Friday',
               ),
               _space(),
@@ -129,7 +129,12 @@ class _TemplateScreenState extends State<TemplateScreen> {
 
   _navigationGallery() {
     Navigator.of(context).push(CustomPageNavigationBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const GalleryScreen()),);
+        pageBuilder: (context, animation, secondaryAnimation) =>   const GalleryScreen(isBlackFriday: false,)),);
+  }
+
+  _editBlackFridayTemplate() async {
+    Navigator.of(context).push(CustomPageNavigationBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>   const GalleryScreen(isBlackFriday: true,)),);
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:background/injection.dart';
+import 'package:background/views/dialog/loading.dart';
 import 'package:background/views/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
@@ -45,4 +46,23 @@ class MyApp extends StatelessWidget {
 
 void onBackPress(context,{dynamic result}){
   Navigator.of(context).pop(result);
+}
+
+BuildContext? dialogContext;
+showLoading(context){
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    useSafeArea: false,
+    builder: (BuildContext context) {
+      dialogContext = context;
+      return const LoadingView();
+    },
+  );
+}
+
+hideLoading(){
+  if(dialogContext != null){
+    Navigator.pop(dialogContext!);
+  }
 }

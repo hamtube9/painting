@@ -1,3 +1,5 @@
+import 'package:background/blocs/edit/edit_bloc.dart';
+import 'package:background/blocs/edit/edit_provider.dart';
 import 'package:background/model/local_image.dart';
 import 'package:background/services/pick_image_services.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
@@ -97,8 +99,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void navigateToEdit(LocalImage image) async {
-    await  Navigator.of(context).push(CustomPageNavigationBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>  EditImageScreen(image: image,)),);
+      Navigator.of(context).push(CustomPageNavigationBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>  EditProvider(child: EditImageScreen(image: image,),bloc: EditBloc(),)),);
   }
 
   _pickImage() async  {
