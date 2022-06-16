@@ -3,15 +3,20 @@ import 'dart:ui';
 
 import 'package:background/blocs/edit/edit_bloc.dart';
 import 'package:background/blocs/edit/edit_provider.dart';
+import 'package:background/blocs/edit/pain_provider.dart';
+import 'package:background/blocs/edit/paint_bloc.dart';
 import 'package:background/main.dart';
 import 'package:background/model/item_widget/item_widget.dart';
 import 'package:background/model/local_image.dart';
 import 'package:background/services/pick_image_services.dart';
 import 'package:background/utils/controller/list_color.dart';
+import 'package:background/utils/controller/matrix.dart';
+import 'package:background/utils/navigation/navigation_page.dart';
 import 'package:background/utils/styles/text_style.dart';
+import 'package:background/views/painting_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 
 class EditImageScreen extends StatefulWidget {
   final LocalImage? image;
@@ -26,7 +31,7 @@ class EditImageScreen extends StatefulWidget {
 class _EditImageScreenState extends State<EditImageScreen> {
   Matrix4? matrix = Matrix4.identity();
 
-  // final keyImage = GlobalKey();
+  final keyImage = GlobalKey();
   // final keyResizeImage = GlobalKey();
   EditBloc? bloc;
   List<ItemWidget> listW = [];
@@ -85,7 +90,6 @@ class _EditImageScreenState extends State<EditImageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: SizedBox(
@@ -93,8 +97,16 @@ class _EditImageScreenState extends State<EditImageScreen> {
         child: Row(
           children: [
             Expanded(
-                child: _itemEdit("assets/svg/edit1.svg", () {
-              bloc!.updateEditColor();
+                child: _itemEdit("assets/svg/edit1.svg", () async  {
+                  final boundary =  keyImage.currentContext!.findRenderObject() as RenderRepaintBoundary;
+                  showLoading(context);
+                  final image = await boundary.toImage(pixelRatio: 10);
+                  final byteData = await image.toByteData(format: ImageByteFormat.png);
+                  hideLoading();
+                  final pngBytes = byteData!.buffer.asUint8List();
+               var res =  await  Navigator.of(context).push(CustomPageNavigationBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>   PaintProvider(child: PaintingScreen(image: pngBytes),bloc: PaintBloc(),)),);
+
             })),
             Expanded(child: _itemEdit("assets/svg/edit2.svg", () => _editText())),
             Expanded(child: _itemEdit("assets/svg/edit3.svg", () => _openLocalImage())),
@@ -189,67 +201,71 @@ class _EditImageScreenState extends State<EditImageScreen> {
                     );
             },
           ),
-          Expanded(
-              child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: RepaintBoundary(
-                  // key: keyImage,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                          top: 0,
-                          right: 0,
-                          bottom: 0,
-                          left: 0,
-                          child: Container(
-                            color: const Color(0xffE1E9F3),
-                            width: size.width,
-                            height: widget.isBlackFriday ? size.height : size.width,
-                            child: Stack(
-                                children: List<Widget>.generate(
-                                    listW.length, (index) => _itemStack(index)).toList()),
-                          )
+          Expanded(child: LayoutBuilder(
+            builder: (context, constraints) {
+              final size = constraints.biggest;
+              return Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: RepaintBoundary(
+                      key: keyImage,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                              top: 0,
+                              right: 0,
+                              bottom: 0,
+                              left: 0,
+                              child: Container(
+                                color: const Color(0xffE1E9F3),
+                                width: size.width,
+                                height: size.height,
+                                child: Stack(
+                                    children: List<Widget>.generate(
+                                        listW.length, (index) => _itemStack(index, size)).toList()),
+                              )
 
-                          // ValueListenableBuilder<List<Widget>?>(builder: (context, value, child) {
-                          //   return Stack(
-                          //       children: List<Widget>.generate(value!.length, (index) => value[index]).toList());
-                          // },valueListenable:bloc!.notifierWidget),
-                          // ),
+                              // ValueListenableBuilder<List<Widget>?>(builder: (context, value, child) {
+                              //   return Stack(
+                              //       children: List<Widget>.generate(value!.length, (index) => value[index]).toList());
+                              // },valueListenable:bloc!.notifierWidget),
+                              // ),
+                              ),
+                          Container(
+                            margin: const EdgeInsets.all(16),
+                            width: size.width,
+                            height: size.height,
+                            child: ValueListenableBuilder<EditType?>(
+                              valueListenable: bloc!.notifierEditType,
+                              builder: (c, v, _) {
+                                if (v != null) {
+                                  return _content(v);
+                                } else {
+                                  return Container(
+                                    color: Colors.transparent,
+                                  );
+                                }
+                              },
+                            ),
                           ),
-                      Container(
-                        margin: const EdgeInsets.all(16),
-                        width: size.width,
-                        height: widget.isBlackFriday ? size.height : size.width,
-                        child: ValueListenableBuilder<EditType?>(
-                          valueListenable: bloc!.notifierEditType,
-                          builder: (c, v, _) {
-                            if (v != null) {
-                              return _content(v);
-                            } else {
-                              return Container(
-                                color: Colors.transparent,
-                              );
-                            }
-                          },
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              AnimatedPositioned(
-                bottom: 0,
-                right: 0,
-                left: 0,
-                duration: const Duration(milliseconds: 500),
-                child: _colorPicker(),
-              )
-            ],
+                  AnimatedPositioned(
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    duration: const Duration(milliseconds: 500),
+                    child: _colorPicker(),
+                  )
+                ],
+              );
+            },
           ))
         ],
       ),
@@ -319,6 +335,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
                         this.matrix = matrix;
                       });
                     },
+                    onScaling: (bool) {},
                     child: Container(
                         width: size.width,
                         height: widget.isBlackFriday ? size.height : size.width,
@@ -384,9 +401,6 @@ class _EditImageScreenState extends State<EditImageScreen> {
   _onTapDown(TapDownDetails details) {
     var localPosition = details.localPosition;
     setState(() {
-      // listW.add(
-
-      //     )));
       listW.add(ItemWidget(
           type: TypeItem.text,
           image: null,
@@ -401,10 +415,12 @@ class _EditImageScreenState extends State<EditImageScreen> {
     // EditProvider.of(context)!.updateListWidget(listW);
   }
 
-  _itemStack(int index) {
+  _itemStack(int index, Size maxSize) {
     var item = listW[index];
     if (item.type == TypeItem.text) {
       return _ItemTextField(
+        dy: item.dy,
+        dx: item.dx,
         key: Key("$index"),
         index: index,
         onTap: (i) {
@@ -413,52 +429,24 @@ class _EditImageScreenState extends State<EditImageScreen> {
           });
         },
         isSelected: indexSelected == index,
+        updatePosition: (x, y, b) {
+          if (b) {
+            double dy = y < 64 ? 64 : (y > maxSize.height - 64 ? maxSize.height - 64 : y);
+            double dx = x < 8 ? 8 : (x > maxSize.width - 10 ? maxSize.width - 10 : x);
+            var itm = ItemWidget.coppyWith(
+                dy: dy,
+                dx: dx,
+                type: item.type,
+                image: item.image,
+                height: item.height,
+                width: item.width);
+            setState(() {
+              listW[index] = itm;
+            });
+          }
+        },
+        maxSize: maxSize,
       );
-      // return ResizebleWidget(
-      //     onChangeAllSize: (h, w) {
-      //       setState(() {
-      //         item = ItemWidget.coppyWith(
-      //             dy: item.dy,
-      //             dx: item.dx,
-      //             type: item.type,
-      //             image: item.image,
-      //             height: h,
-      //             width: w);
-      //         listW[index] = item;
-      //       });
-      //     },
-      //     selected: indexSelected == index,
-      //     key: Key("$index"),
-      //     position: Offset(item.dx!, item.dy!),
-      //     height: item.height!,
-      //     width: item.width!,
-      //     changePosition: (dx, dy) {
-      //       setState(() {
-      //         item = ItemWidget.coppyWith(
-      //             dy: dy,
-      //             dx: dx,
-      //             type: item.type,
-      //             image: item.image,
-      //             height: item.height,
-      //             width: item.width);
-      //         listW[index] = item;
-      //       });
-      //     },
-      //     index: index,
-      //     selectIndex: (i) {
-      //       setState(() {
-      //         indexSelected = i;
-      //       });
-      //     },
-      //     child: _ItemTextField(
-      //       index: index,
-      //       onTap: (i) {
-      //         setState(() {
-      //           indexSelected = i;
-      //         });
-      //       },
-      //       isSelected: indexSelected == index,
-      //     ));
     } else if (item.type == TypeItem.localImage) {
       return Positioned(
         key: Key("$index"),
@@ -497,16 +485,20 @@ class _ItemTextField extends StatefulWidget {
   final int index;
   final bool isSelected;
   final Function(int) onTap;
-  final double? height;
-  final double? width;
+  final Function(double, double, bool) updatePosition;
+  final double? dx;
+  final double? dy;
+  final Size maxSize;
 
   const _ItemTextField({
     Key? key,
     required this.isSelected,
     required this.onTap,
     required this.index,
-    this.height,
-    this.width,
+    required this.updatePosition,
+    required this.dx,
+    required this.dy,
+    required this.maxSize,
   }) : super(key: key);
 
   @override
@@ -514,13 +506,13 @@ class _ItemTextField extends StatefulWidget {
 }
 
 class _ItemTextFieldState extends State<_ItemTextField> {
-  FocusNode _focusNode = FocusNode();
-  TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
   String text = "";
   int line = 1;
   Matrix4? matrix = Matrix4.identity();
   final GlobalKey key = GlobalKey();
-  Size? _size;
+  Offset? offset;
 
   @override
   void initState() {
@@ -548,89 +540,101 @@ class _ItemTextFieldState extends State<_ItemTextField> {
     } else {
       _focusNode.unfocus();
     }
+    print("${widget.dx} ${widget.dy}");
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => widget.onTap(widget.index),
       child: SizedBox(
-          height: size.height,
-          width: size.width,
-          child: Center(
-            child: Transform(
-              transform: matrix!,
-              child: MatrixGestureDetector(
-                onMatrixUpdate:
-                    (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
-                      var s =  MatrixUtils
-                          .transformRect(matrix, key.currentContext!
-                          .findRenderObject()!
-                          .paintBounds);
-                  setState(() {
-                    this.matrix = matrix;
-                    _size = s.size;
-                  });
+          height: widget.maxSize.height,
+          width: widget.maxSize.width,
+          child: Stack(
+            children: [
+              Positioned(
+                  top: widget.dy!,
+                  left: widget.dx!,
+                  child: Transform(
+                    transform: matrix!,
+                    child: MatrixGestureDetector(
+                      onMatrixUpdate:
+                          (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                        var s = MatrixUtils.transformRect(
+                            matrix, key.currentContext!.findRenderObject()!.paintBounds);
 
-                  // print(s.size);
-                  print(s.size);
-                },
-                child: Container(
-                  key: key,
-                  decoration: BoxDecoration(
-                    color: text.isEmpty ?  Colors.black.withOpacity(0.6) : Colors.transparent,
-                  ),
-                  height: line > 1 ? 30.0 * line : 40,
-                  width: text.isEmpty
-                      ? 60.0
-                      : (text.length * 6 > size.width ? size.width : text.length * 6),
-                  child:  widget.isSelected ?TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLength: null,
-                    maxLines: line,
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    onChanged: (s) {
-                      setState(() {
-                        text = s;
-                      });
-                      if (text.length * 7 >= size.width/2) {
-                        String t = "";
-                        var list = text.split(' ').toList();
-                        for (var i = 0; i < list.length; i++) {
-                          if (i == list.length - 1) {
-                            t += "\n${list[i]}";
-                          } else {
-                            t += '${list[i]} ';
-                          }
-                        }
+                        RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+                        Offset position = box.localToGlobal(Offset.zero);
                         setState(() {
-                          line = t.length * 7 ~/ size.width <= 1
-                              ? 1
-                              : t.length * 7 ~/ size.width;
+                          this.matrix = matrix;
+                          offset = position;
                         });
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(10),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
+                        print(offset);
+                      },
+                      onScaling: (b) {
+                        if (!b) {
+                          // widget.updatePosition(offset!.dx, offset!.dy, !b);
+                        }
+                      },
+                      child: Container(
+                        key: key,
+                        decoration: BoxDecoration(
+                          color: text.isEmpty ? Colors.black.withOpacity(0.6) : Colors.transparent,
+                        ),
+                        height: line > 1 ? 30.0 * line : 40,
+                        width: text.isEmpty
+                            ? 60.0
+                            : (text.length * 6 > widget.maxSize.width
+                                ? widget.maxSize.width
+                                : text.length * 6),
+                        child: widget.isSelected
+                            ? TextField(
+                                keyboardType: TextInputType.multiline,
+                                maxLength: null,
+                                maxLines: line,
+                                controller: _controller,
+                                focusNode: _focusNode,
+                                onChanged: (s) {
+                                  setState(() {
+                                    text = s;
+                                  });
+                                  if (text.length * 7 >= widget.maxSize.width / 2) {
+                                    String t = "";
+                                    var list = text.split(' ').toList();
+                                    for (var i = 0; i < list.length; i++) {
+                                      if (i == list.length - 1) {
+                                        t += "\n${list[i]}";
+                                      } else {
+                                        t += '${list[i]} ';
+                                      }
+                                    }
+                                    setState(() {
+                                      line = t.length * 7 ~/ widget.maxSize.width <= 1
+                                          ? 1
+                                          : t.length * 7 ~/ widget.maxSize.width;
+                                    });
+                                  }
+                                },
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.all(10),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.transparent),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.transparent),
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                    fontFamily: 'SFProDisplay', color: Colors.black),
+                              )
+                            : Text(
+                                text,
+                                style: const TextStyle(fontFamily: 'SFProDisplay'),
+                              ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:   BorderSide(color: Colors.transparent),
-                      ), ),
-                    style: const TextStyle(
-                        fontFamily: 'SFProDisplay',
-                        color: Colors.black
                     ),
-                  ) : Text(
-                    text,
-                    style: const TextStyle(fontFamily: 'SFProDisplay'),
-                  ),
-                ),
-              ),
-            ),
+                  ))
+            ],
           )),
     );
   }
