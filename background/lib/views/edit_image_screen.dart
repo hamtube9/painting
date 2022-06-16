@@ -30,13 +30,17 @@ class _EditImageScreenState extends State<EditImageScreen> {
   // final keyResizeImage = GlobalKey();
   EditBloc? bloc;
   List<ItemWidget> listW = [];
+  List<List<ItemWidget>> stamps = [];
   int indexSelected = 0;
+  int? indexStamp;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     bloc = EditProvider.of(context);
+    listW = [];
+    stamps = [];
   }
 
   @override
@@ -51,18 +55,32 @@ class _EditImageScreenState extends State<EditImageScreen> {
       double dy = widget.image!.height! < size.height
           ? (size.height - widget.image!.height!.toDouble()) / 2
           : 0;
-      // listW.add(
 
-      // );
-      listW.add(ItemWidget(
-          type: TypeItem.localImage,
-          image: widget.image!.filePath,
-          dx: dx,
-          dy: dy,
-          width: size.width,
-          height: size.height - 140));
+      setState(() {
+        listW.add(ItemWidget(
+            type: TypeItem.localImage,
+            image: widget.image!.filePath,
+            dx: dx,
+            dy: dy,
+            width: size.width,
+            height: size.height - 140));
+        updateStamps(List.from(List.from(listW)));
+      });
+
       bloc!.init();
     }
+  }
+
+  updateStamps(List<ItemWidget> l) {
+    if (indexStamp != null && indexStamp! < stamps.length - 1) {
+      setState(() {
+        stamps.removeRange(indexStamp!, stamps.length);
+      });
+    }
+    setState(() {
+      stamps.add(l);
+      indexStamp = stamps.length - 1;
+    });
   }
 
   @override
@@ -105,24 +123,33 @@ class _EditImageScreenState extends State<EditImageScreen> {
                                 )
                               : Container(),
                           const Spacer(),
-                          value == EditType.color
-                              ? TextButton.icon(
-                                  onPressed: () {},
-                                  icon: SvgPicture.asset(
-                                    "assets/svg/ic_turn_left.svg",
-                                    color: Colors.black,
-                                  ),
-                                  label: Container())
-                              : Container(),
-                          value == EditType.color
-                              ? TextButton.icon(
-                                  onPressed: () {},
-                                  icon: SvgPicture.asset(
-                                    "assets/svg/ic_turn_right.svg",
-                                    color: Colors.black,
-                                  ),
-                                  label: Container())
-                              : Container(),
+                          TextButton.icon(
+                              onPressed: () {
+                                if (indexStamp! <= 0) {
+                                  return;
+                                }
+                                if (indexStamp == null) {
+                                  indexStamp = stamps.length - 1;
+                                } else {
+                                  indexStamp = indexStamp! - 1;
+                                }
+                                setState(() {
+                                  listW.clear();
+                                  listW = List.from(stamps[indexStamp!]);
+                                });
+                              },
+                              icon: SvgPicture.asset(
+                                "assets/svg/ic_turn_left.svg",
+                                color: Colors.black,
+                              ),
+                              label: Container()),
+                          TextButton.icon(
+                              onPressed: () {},
+                              icon: SvgPicture.asset(
+                                "assets/svg/ic_turn_right.svg",
+                                color: Colors.black,
+                              ),
+                              label: Container()),
                           value == EditType.normal
                               ? Container(
                                   margin: const EdgeInsets.fromLTRB(0, 8, 16, 8),
@@ -248,13 +275,16 @@ class _EditImageScreenState extends State<EditImageScreen> {
     var image = await PickImageService.pickImage(context);
     var size = MediaQuery.of(context).size;
     if (image != null) {
-      listW.add(ItemWidget(
-          width: 200,
-          height: 200,
-          dy: (size.height / 2) - 100,
-          dx: (size.width / 2) - 100,
-          image: image.filePath,
-          type: TypeItem.itemImage));
+      setState(() {
+        listW.add(ItemWidget(
+            width: 200,
+            height: 200,
+            dy: (size.height / 2) - 100,
+            dx: (size.width / 2) - 100,
+            image: image.filePath,
+            type: TypeItem.itemImage));
+      });
+      updateStamps(List.from(listW));
     }
     // bloc!.updateShowPickImage(context);
   }
@@ -364,8 +394,8 @@ class _EditImageScreenState extends State<EditImageScreen> {
           dy: localPosition.dy,
           height: 40,
           width: 60));
-      print(listW);
     });
+    updateStamps(List.from(listW));
     bloc!.updateShowAddText();
 
     // EditProvider.of(context)!.updateListWidget(listW);
