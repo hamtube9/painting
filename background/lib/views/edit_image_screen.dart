@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:background/blocs/edit/edit_bloc.dart';
@@ -32,6 +33,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
   Matrix4? matrix = Matrix4.identity();
 
   final keyImage = GlobalKey();
+
   // final keyResizeImage = GlobalKey();
   EditBloc? bloc;
   List<ItemWidget> listW = [];
@@ -97,17 +99,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
         child: Row(
           children: [
             Expanded(
-                child: _itemEdit("assets/svg/edit1.svg", () async  {
-                  final boundary =  keyImage.currentContext!.findRenderObject() as RenderRepaintBoundary;
-                  showLoading(context);
-                  final image = await boundary.toImage(pixelRatio: 10);
-                  final byteData = await image.toByteData(format: ImageByteFormat.png);
-                  hideLoading();
-                  final pngBytes = byteData!.buffer.asUint8List();
-               var res =  await  Navigator.of(context).push(CustomPageNavigationBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>   PaintProvider(child: PaintingScreen(image: pngBytes),bloc: PaintBloc(),)),);
-
-            })),
+                child: _itemEdit("assets/svg/edit1.svg", () => addPaint())),
             Expanded(child: _itemEdit("assets/svg/edit2.svg", () => _editText())),
             Expanded(child: _itemEdit("assets/svg/edit3.svg", () => _openLocalImage())),
             Expanded(child: _itemEdit("assets/svg/edit4.svg", () {})),
@@ -289,14 +281,14 @@ class _EditImageScreenState extends State<EditImageScreen> {
 
   _openLocalImage() async {
     var image = await PickImageService.pickImage(context);
-    var size = MediaQuery.of(context).size;
+
     if (image != null) {
       setState(() {
         listW.add(ItemWidget(
             width: 200,
             height: 200,
-            dy: (size.height / 2) - 100,
-            dx: (size.width / 2) - 100,
+            dy: (MediaQuery.of(context).size.height / 2) - 150,
+            dx: (MediaQuery.of(context).size.width / 2) - 50,
             image: image.filePath,
             type: TypeItem.itemImage));
       });
@@ -316,7 +308,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(8), topRight: Radius.circular(8))),
                   height: 72,
-                  child: const ListColorView(),
+                  child: ListColorView(onChangeColor: (c) {}),
                 )
               : Container();
         });
@@ -429,22 +421,6 @@ class _EditImageScreenState extends State<EditImageScreen> {
           });
         },
         isSelected: indexSelected == index,
-        updatePosition: (x, y, b) {
-          if (b) {
-            double dy = y < 64 ? 64 : (y > maxSize.height - 64 ? maxSize.height - 64 : y);
-            double dx = x < 8 ? 8 : (x > maxSize.width - 10 ? maxSize.width - 10 : x);
-            var itm = ItemWidget.coppyWith(
-                dy: dy,
-                dx: dx,
-                type: item.type,
-                image: item.image,
-                height: item.height,
-                width: item.width);
-            setState(() {
-              listW[index] = itm;
-            });
-          }
-        },
         maxSize: maxSize,
       );
     } else if (item.type == TypeItem.localImage) {
@@ -463,20 +439,52 @@ class _EditImageScreenState extends State<EditImageScreen> {
               });
             }),
       );
-    } else {
-      return Positioned(
+    } else if (item.type == TypeItem.itemImage) {
+      return _ItemImageWidget(
+        dy: item.dy,
+        dx: item.dx,
         key: Key("$index"),
-        width: item.width,
-        height: item.height,
-        top: item.dy,
-        left: item.dx,
-        child: Image.file(
-          File(
-            item.image!,
-          ),
-          fit: BoxFit.cover,
-        ),
+        index: index,
+        isSelected: indexSelected == index,
+        maxSize: maxSize,
+        path: item.image!,
       );
+    } else {
+      return  _ItemPaintWidget(
+        height: item.height,
+        width: item.width,
+        dy: item.dy,
+        dx: item.dx,
+        key: Key("$index"),
+        index: index,
+        maxSize: maxSize,
+        image: item.uint8list,
+      );
+    }
+  }
+
+  addPaint() async {
+    final boundary = keyImage.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    print(boundary.size);
+    showLoading(context);
+    final image = await boundary.toImage(pixelRatio: 10);
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    hideLoading();
+    final pngBytes = byteData!.buffer.asUint8List();
+    if(mounted){
+      ItemWidget? res = await Navigator.of(context).push(
+        CustomPageNavigationBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => PaintProvider(
+              bloc: PaintBloc(),
+              child: PaintingScreen(image: pngBytes),
+            )),
+      );
+      if (res != null) {
+        setState(() {
+          listW.add(res);
+        });
+        updateStamps(List.from(listW));
+      }
     }
   }
 }
@@ -485,7 +493,6 @@ class _ItemTextField extends StatefulWidget {
   final int index;
   final bool isSelected;
   final Function(int) onTap;
-  final Function(double, double, bool) updatePosition;
   final double? dx;
   final double? dy;
   final Size maxSize;
@@ -495,7 +502,6 @@ class _ItemTextField extends StatefulWidget {
     required this.isSelected,
     required this.onTap,
     required this.index,
-    required this.updatePosition,
     required this.dx,
     required this.dy,
     required this.maxSize,
@@ -664,5 +670,183 @@ class _ItemLocalImageState extends State<_ItemLocalImage> {
         ),
       ),
     );
+  }
+}
+
+class _ItemImageWidget extends StatefulWidget {
+  final int index;
+  final bool isSelected;
+  final double? dx;
+  final double? dy;
+  final Size maxSize;
+  final String path;
+
+  const _ItemImageWidget({
+    Key? key,
+    required this.isSelected,
+    required this.index,
+    required this.dx,
+    required this.dy,
+    required this.maxSize,
+    required this.path,
+  }) : super(key: key);
+
+  @override
+  State<_ItemImageWidget> createState() => _ItemImageWidgetState();
+}
+
+class _ItemImageWidgetState extends State<_ItemImageWidget> {
+  int line = 1;
+  Matrix4? matrix = Matrix4.identity();
+  final GlobalKey key = GlobalKey();
+  Offset? offset;
+  bool isCircle = false;
+  double size = 80;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: widget.maxSize.height,
+        width: widget.maxSize.width,
+        child: Stack(
+          children: [
+            Positioned(
+              top: widget.dy!,
+              left: widget.dx!,
+              child: Transform(
+                transform: matrix!,
+                child: MatrixGestureDetector(
+                  onMatrixUpdate:
+                      (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                    var s = MatrixUtils.transformRect(
+                        matrix, key.currentContext!.findRenderObject()!.paintBounds);
+
+                    RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+                    Offset position = box.localToGlobal(Offset.zero);
+                    setState(() {
+                      this.matrix = matrix;
+                      offset = position;
+                    });
+                    print(offset);
+                  },
+                  onScaling: (b) {},
+                  child: Container(
+                    key: key,
+                    height: size,
+                    width: size,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          left: 0,
+                          child: isCircle
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(size / 2),
+                                  child: Image.file(
+                                    File(widget.path),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Image.file(
+                                  File(widget.path),
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          left: 0,
+                          child: InkWell(onTap: () {
+                            setState(() {
+                              isCircle = !isCircle;
+                            });
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+}
+
+class _ItemPaintWidget extends StatefulWidget {
+  final int index;
+  final double? dx;
+  final double? dy;
+  final double? height;
+  final double? width;
+  final Size maxSize;
+  final Uint8List? image;
+
+  const _ItemPaintWidget({
+    Key? key,
+    required this.index,
+    required this.dx,
+    required this.dy,
+    required this.maxSize,
+    required this.image, this.height, this.width,
+  }) : super(key: key);
+
+  @override
+  State<_ItemPaintWidget> createState() => _ItemPaintWidgetState();
+}
+
+class _ItemPaintWidgetState extends State<_ItemPaintWidget> {
+  Matrix4? matrix = Matrix4.identity();
+  final GlobalKey key = GlobalKey();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: widget.maxSize.height,
+        width: widget.maxSize.width,
+        child: Stack(
+          children: [
+            Positioned(
+              top: widget.dy!,
+              left: widget.dx!,
+              child: Transform(
+                transform: matrix!,
+                child: MatrixGestureDetector(
+                  onMatrixUpdate:
+                      (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+
+                    setState(() {
+                      this.matrix = matrix;
+                    });
+                  },
+                  onScaling: (b) {},
+                  child: Container(
+                    key: key,
+                    width: widget.width,
+                    height: widget.height,
+                    child: Image.memory(
+                    widget.image!,
+                    fit: BoxFit.cover,
+                  ),),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

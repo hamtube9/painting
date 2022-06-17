@@ -1,8 +1,13 @@
+import 'dart:ffi';
+
 import 'package:background/utils/controller/circle_color.dart';
+import 'package:background/views/dialog/dialog_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ListColorView extends StatefulWidget {
-  const ListColorView({Key? key}) : super(key: key);
+  final Function(Color) onChangeColor;
+  const ListColorView({Key? key, required this.onChangeColor}) : super(key: key);
 
   @override
   State<ListColorView> createState() => _ListColorViewState();
@@ -21,7 +26,18 @@ class _ListColorViewState extends State<ListColorView> {
             height: 56,
             width: 56,
             margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-            child: const MultiColorView(),
+            child: GestureDetector(
+                onTap: () async {
+                  Color? color =
+                      await showDialog(context: context, builder: (context) => const DialogColor());
+                  if(color != null){
+                    setState(() {
+                      colorPicker = color;
+                    });
+                    widget.onChangeColor(colorPicker!);
+                  }
+                },
+                child: const MultiColorView()),
           ),
         ),
         SliverList(
@@ -31,6 +47,7 @@ class _ListColorViewState extends State<ListColorView> {
                       setState(() {
                         colorPicker = color;
                       });
+                      widget.onChangeColor(colorPicker!);
                     },
                     colorItem: colors[index],
                     isColorPicker: colorPicker != null && colorPicker == colors[index]),
@@ -48,10 +65,7 @@ class _itemColor extends StatefulWidget {
   final Function selectedColor;
 
   const _itemColor(
-      {Key? key,
-      required this.isColorPicker,
-      required this.colorItem,
-      required this.selectedColor})
+      {Key? key, required this.isColorPicker, required this.colorItem, required this.selectedColor})
       : super(key: key);
 
   @override
@@ -67,9 +81,14 @@ class _itemColorState extends State<_itemColor> {
         height: 56,
         width: 56,
         margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-        decoration: BoxDecoration(color: widget.colorItem,shape: BoxShape.circle),
+        decoration: BoxDecoration(color: widget.colorItem, shape: BoxShape.circle),
         alignment: Alignment.center,
-        child: widget.isColorPicker ? const Icon(Icons.check,color: Colors.white,) : null,
+        child: widget.isColorPicker
+            ? const Icon(
+                Icons.check,
+                color: Colors.white,
+              )
+            : null,
       ),
     );
   }
