@@ -229,8 +229,9 @@ class _PaintingViewState extends State<PaintingScreen> {
   rebound() async {
     Uint8List? unint8list = await bloc!.reboundImage(keyPath, context);
     if(mounted){
-      item!.uint8list = unint8list;
-      Navigator.of(context).pop(item);
+      var i = ItemWidget.coppyWith(uint8list: unint8list,type: item!.type,dy: item!.dy,dx: item!.dx,
+      height: item!.height,width: item!.width,);
+      Navigator.of(context).pop(i);
     }
   }
 
@@ -373,29 +374,32 @@ class _PaintingViewState extends State<PaintingScreen> {
                       };
                     }),
                   },
-                  child: ClipRect(
-                    child: CustomPaint(
-                      foregroundPainter: Sketcher(
-                        drawControll!.points ?? [],
-                        kCanvasSize,
-                        drawControll != null ? drawControll.symmetryLines! : 5,
-                        drawControll != null ? drawControll.currentColor : Colors.red,
-                        drawController.penTool!,
+                  child: RepaintBoundary(
+                    key: drawControll!.globalKey,
+                    child: ClipRect(
+                      child: CustomPaint(
+                        foregroundPainter: Sketcher(
+                          drawControll.points ?? [],
+                          kCanvasSize,
+                          drawControll != null ? drawControll.symmetryLines! : 5,
+                          drawControll != null ? drawControll.currentColor : Colors.red,
+                          drawController.penTool!,
+                        ),
+                        painter: LastImageAsBackground(
+                          image: drawControll == null
+                              ? null
+                              : drawControll.stamp!.isEmpty
+                                  ? null
+                                  : drawControll.stamp!.last!.image,
+                        ),
+                        size: Size(
+                          kCanvasSize.width / 2,
+                          kCanvasSize.height / 2,
+                        ),
+                        willChange: true,
+                        isComplex: true,
+                        child: const SizedBox.expand(),
                       ),
-                      painter: LastImageAsBackground(
-                        image: drawControll == null
-                            ? null
-                            : drawControll.stamp!.isEmpty
-                                ? null
-                                : drawControll.stamp!.last!.image,
-                      ),
-                      size: Size(
-                        kCanvasSize.width / 2,
-                        kCanvasSize.height / 2,
-                      ),
-                      willChange: true,
-                      isComplex: true,
-                      child: const SizedBox.expand(),
                     ),
                   ),
                 ),
