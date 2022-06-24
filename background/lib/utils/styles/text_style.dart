@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class AppTextStyle{
   
-  static TextStyle styleOnboardingTitle({Color textColor =  AppColor.neutralLight1}) =>
+  static TextStyle styleOnboardingTitle({Color textColor =  AppColor.neutral1}) =>
       TextStyle(
           fontSize: SizeText.kSizeTextOnboarding,
           fontFamily: MyStrings.fontFamily,

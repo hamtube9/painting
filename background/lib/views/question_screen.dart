@@ -1,4 +1,3 @@
-import 'package:background/utils/Constant.dart';
 import 'package:background/utils/controller/button_primary.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
@@ -17,77 +16,95 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Expanded(
-                child: Column(
-              children: [
-                Expanded(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "Do you need for?",
-                      style: AppTextStyle.styleTitle2(),
-                    ),
-                    Text(
-                      "Optimize your experience",
-                      style: AppTextStyle.styleCallout(textColor: AppColor.neutralLight1),
-                    )
-                  ],
-                )),
-                Expanded(
-                  flex: 3,
-                  child: Column(
+        backgroundColor: AppColor.neutral5.withOpacity(0.4),
+        body: Stack(children: [
+          Positioned(
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+            child: Image.asset(
+              'assets/images/background.png',
+              fit: BoxFit.fill,
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Expanded(
+                      child: Column(
                     children: [
                       Expanded(
-                          child: _ItemQuestionView(
-                        onClick: () {},
-                        text: 'Media',
-                        content: "Instagram, Facebook, Tiktok, Youtube & More",
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            "Do you need for?",
+                            style: AppTextStyle.styleTitle2(),
+                          ),
+                          Text(
+                            "Optimize your experience",
+                            style: AppTextStyle.styleCallout(textColor: AppColor.neutralLight1),
+                          )
+                        ],
                       )),
                       Expanded(
-                          child: _ItemQuestionView(
-                        onClick: () {},
-                        text: 'e-Commerce',
-                        content: "Amazon, Ebay, Shopify & More",
-                      )),
-                      Expanded(
-                          child: _ItemQuestionView(
-                        onClick: () {},
-                        text: 'Small Store',
-                        content: "The personal store ( websites, fanpages, chanels ...)",
-                      )),
-                      Expanded(
-                          child: _ItemQuestionView(
-                        onClick: () {},
-                        text: "Let's me try",
-                        content: "Discovery features of the app",
-                      )),
-                      Expanded(child: Container()),
-                      Expanded(child: Container()),
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            Expanded(
+                                child: _ItemQuestionView(
+                              onClick: () {},
+                              text: 'Media',
+                              content: "Instagram, Facebook, Tiktok, Youtube & More",
+                            )),
+                            Expanded(
+                                child: _ItemQuestionView(
+                              onClick: () {},
+                              text: 'e-Commerce',
+                              content: "Amazon, Ebay, Shopify & More",
+                            )),
+                            Expanded(
+                                child: _ItemQuestionView(
+                              onClick: () {},
+                              text: 'Small Store',
+                              content: "The personal store ( websites, fanpages, chanels ...)",
+                            )),
+                            Expanded(
+                                child: _ItemQuestionView(
+                              onClick: () {},
+                              text: "Let's me try",
+                              content: "Discovery features of the app",
+                            )),
+                            Expanded(child: Container()),
+                            Expanded(child: Container()),
+                          ],
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-              ],
-            )),
-            ButtonPrimary(
-              text: "LET'S GO",
-              onClick: () => _navigateToSubcription(),
-              width: MediaQuery.of(context).size.width,
-            )
-          ],
-        ),
-      ),
-    );
+                  )),
+                  ButtonPrimary(
+                    text: "LET'S GO",
+                    onClick: () => _navigateToSubcription(),
+                    width: MediaQuery.of(context).size.width,
+                  )
+                ],
+              ),
+            ),
+          )
+        ]));
   }
 
   _navigateToSubcription() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => SubcriptionScreen(),
+      builder: (context) => const SubcriptionScreen(),
     ));
   }
 }
@@ -97,7 +114,9 @@ class _ItemQuestionView extends StatefulWidget {
   final String content;
   final Function onClick;
 
-  const _ItemQuestionView({Key? key, required this.text, required this.onClick, required this.content}) : super(key: key);
+  const _ItemQuestionView(
+      {Key? key, required this.text, required this.onClick, required this.content})
+      : super(key: key);
 
   @override
   State<_ItemQuestionView> createState() => _ItemQuestionViewState();
@@ -110,7 +129,10 @@ class _ItemQuestionViewState extends State<_ItemQuestionView> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      decoration: BoxDecoration(border: Border.all(color: const Color(0xffC4D0DF)), color: isSelected ? Color(0xffE9E9E9) : Colors.transparent),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isSelected ? Colors.black : const Color(0xffC4D0DF),width:  isSelected ? 2 : 1),
+          color: isSelected ? const Color(0xffE9E9E9) : Colors.transparent),
       child: Stack(
         children: [
           Positioned(
@@ -118,7 +140,7 @@ class _ItemQuestionViewState extends State<_ItemQuestionView> {
             right: 8,
             left: 8,
             bottom: 8,
-            child:  Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

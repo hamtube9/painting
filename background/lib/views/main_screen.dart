@@ -1,9 +1,13 @@
 import 'package:background/blocs/edit/edit_bloc.dart';
 import 'package:background/blocs/edit/edit_provider.dart';
+import 'package:background/blocs/remove_background/remove_background_bloc.dart';
+import 'package:background/blocs/remove_background/remove_background_provider.dart';
 import 'package:background/model/local_image.dart';
 import 'package:background/services/pick_image_services.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
+import 'package:background/utils/styles/color_style.dart';
 import 'package:background/views/edit_image_screen.dart';
+import 'package:background/views/remove_background_screen.dart';
 import 'package:background/views/settings_view.dart';
 import 'package:background/views/template_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,28 +32,33 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.neutral5.withOpacity(0.4),
       body: PageView(
           physics: const NeverScrollableScrollPhysics(),
           controller: _pageController,
           children: const [TemplateScreen(), SettingsScreen()]),
       bottomNavigationBar: SizedBox(
-        height: 100,
+        height: 80,
         child: Row(
           children: [
             Expanded(
-                child:  GestureDetector(
-                  onTap: ()  => animatePage(0),
-                  child: Container(
-                    color: Colors.transparent,
-                    padding: const EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset('assets/svg/ic_group.svg',height: 24,width: 24,),
-                  ),
-                )),
+                child: GestureDetector(
+              onTap: () => animatePage(0),
+              child: Container(
+                color: Colors.transparent,
+                padding: const EdgeInsets.all(8),
+                alignment: Alignment.center,
+                child: SvgPicture.asset(
+                  'assets/svg/ic_group.svg',
+                  height: 24,
+                  width: 24,
+                ),
+              ),
+            )),
             Expanded(
                 child: Center(
               child: GestureDetector(
-                onTap: () =>_pickImage(),
+                onTap: () => _pickImage(),
                 child: Container(
                   height: 56,
                   width: 56,
@@ -74,22 +83,25 @@ class _MainScreenState extends State<MainScreen> {
               ),
             )),
             Expanded(
-                child:GestureDetector(
-                    onTap: ()  => animatePage(1),
-                    child:Container(
+                child: GestureDetector(
+                    onTap: () => animatePage(1),
+                    child: Container(
                       color: Colors.transparent,
                       padding: const EdgeInsets.all(8),
                       alignment: Alignment.center,
-                      child: SvgPicture.asset('assets/svg/ic_settings.svg',height: 24,width: 24,),
-                    )
-                )),
+                      child: SvgPicture.asset(
+                        'assets/svg/ic_settings.svg',
+                        height: 24,
+                        width: 24,
+                      ),
+                    ))),
           ],
         ),
       ),
     );
   }
 
-  animatePage(int page){
+  animatePage(int page) {
     if (_pageController.page == page) {
       return;
     } else {
@@ -99,14 +111,21 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void navigateToEdit(LocalImage image) async {
-      Navigator.of(context).push(CustomPageNavigationBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>  EditProvider(child: EditImageScreen(image: image,),bloc: EditBloc(),)),);
+    Navigator.of(context).push(
+      CustomPageNavigationBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => RemoveBackgroundProvider(
+                bloc: RemoveBackgroundBloc(),
+                child: RemoveBackgroundScreen(
+                  image: image,
+                ),
+              )),
+    );
   }
 
-  _pickImage() async  {
-    var image = await  PickImageService.pickImage(context);
-    if(image == null){
-      return ;
+  _pickImage() async {
+    var image = await PickImageService.pickImage(context);
+    if (image == null) {
+      return;
     }
     navigateToEdit(image);
   }

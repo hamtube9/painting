@@ -14,7 +14,7 @@ class AppColor {
   static const Color error = Color(0xffF54B34); //Item status: Error, Delete, Cancle..
   static const Color white100 = Color(0xffFFFFFF); //Item status: Error, Delete, Cancle..
   static const Color white94 = Color(0xffF9F9F9); //Item status: Error, Delete, Cancle..
-  static const Color white99 = Color(0xffF0F3F99); //Item status: Error, Delete, Cancle..
+  static const Color white99 = Color(0xffF0F3F9); //Item status: Error, Delete, Cancle..
   static const Color template1 = Color(0xffA3DEFF); //Item status: Success, Done, Verify..
   static const Color template2 = Color(0xffB8FFE5);
   static const Color template3 = Color(0xffDCB9FF);

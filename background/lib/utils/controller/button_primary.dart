@@ -19,7 +19,7 @@ class ButtonPrimary extends StatelessWidget {
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0.0),
+                borderRadius: BorderRadius.circular(12.0),
               ))),
           onPressed: () => onClick(),
           child: Text(

@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:background/model/local_image.dart';
 import 'package:background/utils/Constant.dart';
@@ -54,7 +53,7 @@ class ImageWidget extends StatefulWidget {
 }
 
 class _ImageWidgetState extends State<ImageWidget> {
-  var _itemCache = Map<int, LocalImage>();
+  final _itemCache = <int, LocalImage>{};
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,7 @@ class _ImageWidgetState extends State<ImageWidget> {
                 if (item != null) {
                   return GestureDetector(
                       onTap: () => widget.pickImage(item),
-                      child: Image.memory(item.bytes!, fit: BoxFit.cover));
+                      child: Image.file(File(item.filePath!), fit: BoxFit.cover));
                 }
 
                 return Container();

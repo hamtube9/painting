@@ -12,7 +12,7 @@ class StyleSize{
 }
 
 class SizeText{
-  static const double kSizeTextOnboarding = 40;
+  static const double kSizeTextOnboarding = 34;
   static const double kSizeTextTitle1 = 28;
   static const double kSizeTextTitle2 = 22;
   static const double kSizeTextHeadline = 17;

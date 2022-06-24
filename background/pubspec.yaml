@@ -49,6 +49,7 @@ dependencies:
   path_drawing: ^1.0.0
   bloc: ^8.0.2
   flutter_bloc: ^8.0.1
+  flutter_share: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -98,11 +99,22 @@ flutter:
     - assets/svg/edit3.svg
     - assets/svg/edit4.svg
     - assets/svg/edit5.svg
+    - assets/svg/icon_share.svg
+    - assets/svg/icon_star.svg
+    - assets/svg/icon_trash.svg
+    - assets/svg/icon_log_out.svg
+    - assets/svg/icon_slide.svg
+
     - assets/images/logo.png
     - assets/images/logo_larger.png
     - assets/images/fake.png
     - assets/images/black_friday_large.png
     - assets/images/black_friday.png
+    - assets/images/img-onborading-01.png
+    - assets/images/img-onborading-02.png
+    - assets/images/img-onborading-03.png
+    - assets/images/background.png
+    - assets/images/img-upgrade.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
