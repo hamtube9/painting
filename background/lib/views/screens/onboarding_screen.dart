@@ -1,7 +1,8 @@
+import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/controller/button_primary.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
-import 'package:background/views/question_screen.dart';
+import 'package:background/views/screens/question_screen.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -49,72 +50,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.neutral5.withOpacity(0.4),
-      body: Stack(children: [
-        Positioned(
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 0,
-          child: Image.asset(
-            'assets/images/background.png',
-            fit: BoxFit.fill,
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 16,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-                child: Column(
-                  children: [
-                    Expanded(
-                        flex: 5,
-                        child: PageView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Transform(
-                              transform: Matrix4.identity()..rotateX(currentPage - index),
-                              child: _image(images[index]),
-                            );
-                          },
-                          itemCount: images.length,
-                          controller: _pageController,
-                          onPageChanged: (i) {},
-                        )),
-                    Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _titleIndex(),
-                              Text(
-                                _indexTextContent(),
-                                style: AppTextStyle.styleCallout(),
-                              )
-                            ],
-                          ),
-                        )),
-                  ],
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-              child: ButtonPrimary(
-                text: 'NEXT',
-                onClick: () => _changePage(),
-              ),
-            )
-          ],
-        ),
-      ),
-      ])
+      body: Background(child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                      flex: 5,
+                      child: PageView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Transform(
+                            transform: Matrix4.identity()..rotateX(currentPage - index),
+                            child: _image(images[index]),
+                          );
+                        },
+                        itemCount: images.length,
+                        controller: _pageController,
+                        onPageChanged: (i) {},
+                      )),
+                  Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(child: FittedBox(child: _titleIndex(),)),
+                            Text(
+                              _indexTextContent(),
+                              style: AppTextStyle.styleCallout(),
+                            )
+                          ],
+                        ),
+                      )),
+                ],
+              )),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+            child: ButtonPrimary(
+              text: 'NEXT',
+              onClick: () => _changePage(),
+            ),
+          )
+        ],
+      ),)
     );
   }
 

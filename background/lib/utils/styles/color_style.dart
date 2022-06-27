@@ -36,3 +36,27 @@ class AppColor {
   ]);
 
 }
+
+
+class ThemeColors {
+  static const Color neutral1 = Color(0xff211D1D);
+  static const Color neutral2 = Color(0xff45454B);
+  static const Color neutral3 = Color(0xff7A7A82);
+  static const Color neutral4 = Color(0xffC4C4CD);
+  static const Color neutral5 = Color(0xffE5E9F3);
+  static const Color active = Color(0xff069AB4);
+  static const Color secondary = Color(0xffFB7B7B);
+  static const Color success = Color(0xff3FC574);
+  static const Color error = Color(0xffF54B34);
+  static const Color loadingFrame = Color(0xffF0F3F9);
+  static const Color white1 = Color(0xffF9F9F9);
+  static const Color white2 = Color(0xffFFFFFF);
+}
+
+class ProductColors {
+  static const Color minimalist1 = Color(0xffA3DEFF);
+  static const Color minimalist2 = Color(0xffB8FFE5);
+  static const Color minimalist3 = Color(0xffDCB9FF);
+  static const Color minimalist4 = Color(0xffFFE9BF);
+  static const Color minimalist5 = Color(0xffFFE9BF);
+}

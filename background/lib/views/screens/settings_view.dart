@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'templates/upgrade_view.dart';
+import '../templates/upgrade_view.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -18,93 +18,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColor.neutral5.withOpacity(0.4),
-        body: Stack(children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            child: Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.fill,
+
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _UserInfo(
+                  nameUser: "Ngaos chos",
+                  email: "hamtube9@gmail.com",
+                  image: "",
+                  logOut: (){},
+                ),
+                UpgradeView(onClick: () {}),
+                const SizedBox(
+                  height: 16,
+                ),
+                _buttonLogin("FACEBOOK"),
+                _buttonLogin("GOOGLE"),
+                _buttonLogin("APPLE"),
+                _buttonLogin("TIKTOK"),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: 'By signing in, i agree to the\n',
+                            style: AppTextStyle.styleFoodnote(textColor: Colors.black)),
+                        TextSpan(
+                            text: 'Terms of Use ',
+                            style: AppTextStyle.styleFoodnote(
+                                textColor: AppColor.active, fontWeight: FontWeight.bold)),
+                        TextSpan(
+                            text: ' and ',
+                            style: AppTextStyle.styleFoodnote(textColor: Colors.black)),
+                        TextSpan(
+                            text: 'Privacy Policy',
+                            style: AppTextStyle.styleFoodnote(
+                                textColor: AppColor.active, fontWeight: FontWeight.bold)),
+                      ])),
+                ),
+                _itemSetting("Share your friends", icon: "assets/svg/icon_share.svg",onClick: () => _shareApp()),
+                _itemSetting("Tell us about the app", icon: "assets/svg/icon_star.svg"),
+                _itemSetting(
+                  "Terms of Use ",
+                ),
+                _itemSetting(
+                  "Privacy Policy",
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+                  child: Text(
+                    "You Made",
+                    style: AppTextStyle.styleCallout(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(7, (index) => _itemUserMade(index)),
+                )
+              ],
             ),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _UserInfo(
-                      nameUser: "Ngaos chos",
-                      email: "hamtube9@gmail.com",
-                      image: "",
-                      logOut: (){},
-                    ),
-                    UpgradeView(onClick: () {}),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    _buttonLogin("FACEBOOK"),
-                    _buttonLogin("GOOGLE"),
-                    _buttonLogin("APPLE"),
-                    _buttonLogin("TIKTOK"),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(children: [
-                            TextSpan(
-                                text: 'By signing in, i agree to the\n',
-                                style: AppTextStyle.styleFoodnote(textColor: Colors.black)),
-                            TextSpan(
-                                text: 'Terms of Use ',
-                                style: AppTextStyle.styleFoodnote(
-                                    textColor: AppColor.active, fontWeight: FontWeight.bold)),
-                            TextSpan(
-                                text: ' and ',
-                                style: AppTextStyle.styleFoodnote(textColor: Colors.black)),
-                            TextSpan(
-                                text: 'Privacy Policy',
-                                style: AppTextStyle.styleFoodnote(
-                                    textColor: AppColor.active, fontWeight: FontWeight.bold)),
-                          ])),
-                    ),
-                    _itemSetting("Share your friends", icon: "assets/svg/icon_share.svg",onClick: () => _shareApp()),
-                    _itemSetting("Tell us about the app", icon: "assets/svg/icon_star.svg"),
-                    _itemSetting(
-                      "Terms of Use ",
-                    ),
-                    _itemSetting(
-                      "Privacy Policy",
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(0, 8, 0, 16),
-                      child: Text(
-                        "You Made",
-                        style: AppTextStyle.styleCallout(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    GridView.count(
-                      crossAxisCount: 2,
-                      shrinkWrap: true,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: List.generate(7, (index) => _itemUserMade(index)),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
-        ]));
+        ));
   }
 
   _buttonLogin(String social) {

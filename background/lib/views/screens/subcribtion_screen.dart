@@ -1,8 +1,9 @@
+import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/controller/button_primary.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
-import 'package:background/views/main_screen.dart';
+import 'package:background/views/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class SubcriptionScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _SubcriptionScreenState extends State<SubcriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NotificationListener<ScrollNotification>(
+      body: Background(child: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (scrollNotification is ScrollEndNotification) {
             onScrollEnd();
@@ -60,7 +61,7 @@ class _SubcriptionScreenState extends State<SubcriptionScreen> {
         child: CustomScrollView(
           slivers: [_sliverAppBar(), _sliverContent()],
         ),
-      ),
+      ),),
     );
   }
 

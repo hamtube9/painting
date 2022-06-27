@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ListColorView extends StatefulWidget {
+  final Function? choiceColor;
   final Function(Color) onChangeColor;
-  const ListColorView({Key? key, required this.onChangeColor}) : super(key: key);
+  const ListColorView({Key? key, required this.onChangeColor, this.choiceColor}) : super(key: key);
 
   @override
   State<ListColorView> createState() => _ListColorViewState();
@@ -28,6 +29,7 @@ class _ListColorViewState extends State<ListColorView> {
             margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: GestureDetector(
                 onTap: () async {
+                  widget.choiceColor!();
                   Color? color =
                       await showDialog(context: context, builder: (context) => const DialogColor());
                   if(color != null){

@@ -6,7 +6,7 @@ class MyStrings {
   static const channelMethodPhoto = 'getPhotos';
   static const channelMethodFetchImage = 'fetchImage';
   static const channelMethodRequestPermission = 'request';
-  static const fontFamily = "SFProDisplay";
+  static const fontFamily = "DMSans";
 }
 
 const methodChannel = MethodChannel(MyStrings.channel);

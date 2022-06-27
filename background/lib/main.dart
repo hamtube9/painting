@@ -1,6 +1,7 @@
 import 'package:background/injection.dart';
+import 'package:background/utils/styles/theme.dart';
 import 'package:background/views/dialog/loading.dart';
-import 'package:background/views/splash_screen.dart';
+import 'package:background/views/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    ThemesUtils.configStatusbar();
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

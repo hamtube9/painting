@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class DialogColor extends StatefulWidget {
@@ -10,6 +11,13 @@ class DialogColor extends StatefulWidget {
 
 class _DialogColorState extends State<DialogColor> {
   Color color = Colors.red;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
 
   @override
   Widget build(BuildContext context) {

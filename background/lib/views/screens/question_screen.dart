@@ -1,3 +1,4 @@
+import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/controller/button_primary.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
@@ -16,73 +17,56 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColor.neutral5.withOpacity(0.4),
-        body: Stack(children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            child: Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.fill,
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Expanded(
-                      child: Column(
+        body: Background(child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Expanded(
+                  child: Column(
                     children: [
                       Expanded(
                           child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            "Do you need for?",
-                            style: AppTextStyle.styleTitle2(),
-                          ),
-                          Text(
-                            "Optimize your experience",
-                            style: AppTextStyle.styleCallout(textColor: AppColor.neutralLight1),
-                          )
-                        ],
-                      )),
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Do you need for?",
+                                style: AppTextStyle.styleTitle2(),
+                              ),
+                              Text(
+                                "Optimize your experience",
+                                style: AppTextStyle.styleCallout(textColor: AppColor.neutralLight1),
+                              )
+                            ],
+                          )),
                       Expanded(
                         flex: 3,
                         child: Column(
                           children: [
                             Expanded(
                                 child: _ItemQuestionView(
-                              onClick: () {},
-                              text: 'Media',
-                              content: "Instagram, Facebook, Tiktok, Youtube & More",
-                            )),
+                                  onClick: () {},
+                                  text: 'Media',
+                                  content: "Instagram, Facebook, Tiktok, Youtube & More",
+                                )),
                             Expanded(
                                 child: _ItemQuestionView(
-                              onClick: () {},
-                              text: 'e-Commerce',
-                              content: "Amazon, Ebay, Shopify & More",
-                            )),
+                                  onClick: () {},
+                                  text: 'e-Commerce',
+                                  content: "Amazon, Ebay, Shopify & More",
+                                )),
                             Expanded(
                                 child: _ItemQuestionView(
-                              onClick: () {},
-                              text: 'Small Store',
-                              content: "The personal store ( websites, fanpages, chanels ...)",
-                            )),
+                                  onClick: () {},
+                                  text: 'Small Store',
+                                  content: "The personal store ( websites, fanpages, chanels ...)",
+                                )),
                             Expanded(
                                 child: _ItemQuestionView(
-                              onClick: () {},
-                              text: "Let's me try",
-                              content: "Discovery features of the app",
-                            )),
+                                  onClick: () {},
+                                  text: "Let's me try",
+                                  content: "Discovery features of the app",
+                                )),
                             Expanded(child: Container()),
                             Expanded(child: Container()),
                           ],
@@ -90,16 +74,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       ),
                     ],
                   )),
-                  ButtonPrimary(
-                    text: "LET'S GO",
-                    onClick: () => _navigateToSubcription(),
-                    width: MediaQuery.of(context).size.width,
-                  )
-                ],
-              ),
-            ),
-          )
-        ]));
+              ButtonPrimary(
+                text: "LET'S GO",
+                onClick: () => _navigateToSubcription(),
+                width: MediaQuery.of(context).size.width,
+              )
+            ],
+          ),
+        ),));
   }
 
   _navigateToSubcription() {

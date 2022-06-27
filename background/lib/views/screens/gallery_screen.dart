@@ -1,10 +1,11 @@
 import 'package:background/blocs/edit/edit_bloc.dart';
 import 'package:background/blocs/edit/edit_provider.dart';
 import 'package:background/main.dart';
+import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
-import 'package:background/views/edit_image_screen.dart';
+import 'package:background/views/screens/edit_image_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,7 +23,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0.0,
         title: Text("Minimalist Store", style: AppTextStyle.styleSubhead()),
         leading: IconButton(
@@ -33,7 +34,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
             onPressed: () => onBackPress(context)),
       ),
-      body: Padding(
+      body: Background(child: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(
             childAspectRatio: widget.isBlackFriday ? 0.5 : 1,
@@ -42,7 +43,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: List.generate(10, (index) => _itemImage(index))),
-      ),
+      ),),
     );
   }
 

@@ -1,15 +1,13 @@
-import 'package:background/blocs/edit/edit_bloc.dart';
-import 'package:background/blocs/edit/edit_provider.dart';
 import 'package:background/blocs/remove_background/remove_background_bloc.dart';
 import 'package:background/blocs/remove_background/remove_background_provider.dart';
 import 'package:background/model/local_image.dart';
 import 'package:background/services/pick_image_services.dart';
+import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
 import 'package:background/utils/styles/color_style.dart';
-import 'package:background/views/edit_image_screen.dart';
-import 'package:background/views/remove_background_screen.dart';
-import 'package:background/views/settings_view.dart';
-import 'package:background/views/template_screen.dart';
+import 'package:background/views/screens/remove_background_screen.dart';
+import 'package:background/views/screens/settings_view.dart';
+import 'package:background/views/screens/template_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -21,22 +19,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
+  int page = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.neutral5.withOpacity(0.4),
-      body: PageView(
+      body: Background(child: PageView(
           physics: const NeverScrollableScrollPhysics(),
           controller: _pageController,
-          children: const [TemplateScreen(), SettingsScreen()]),
+          children: const [TemplateScreen(), SettingsScreen()]),),
       bottomNavigationBar: SizedBox(
         height: 80,
         child: Row(
@@ -50,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
                 alignment: Alignment.center,
                 child: SvgPicture.asset(
                   'assets/svg/ic_group.svg',
+                  color: page == 0 ? Colors.black : AppColor.neutral4,
                   height: 24,
                   width: 24,
                 ),
@@ -74,9 +75,9 @@ class _MainScreenState extends State<MainScreen> {
                             blurRadius: 1,
                             spreadRadius: 1)
                       ]),
-                  child: const Icon(
+                  child:   const Icon(
                     Icons.add_rounded,
-                    color: Colors.white,
+                    color:  Colors.white,
                     size: 40,
                   ),
                 ),
@@ -91,6 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                       alignment: Alignment.center,
                       child: SvgPicture.asset(
                         'assets/svg/ic_settings.svg',
+                        color: page == 1 ? Colors.black : AppColor.neutral4,
                         height: 24,
                         width: 24,
                       ),
@@ -105,6 +107,9 @@ class _MainScreenState extends State<MainScreen> {
     if (_pageController.page == page) {
       return;
     } else {
+      setState(() {
+        this.page = page;
+      });
       _pageController.animateToPage(page,
           duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
     }
