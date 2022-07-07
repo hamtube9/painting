@@ -14,6 +14,7 @@ import 'package:background/utils/controller/background.dart';
 import 'package:background/utils/controller/list_color.dart';
 import 'package:background/utils/controller/matrix.dart';
 import 'package:background/utils/navigation/navigation_page.dart';
+import 'package:background/utils/resize_widget.dart';
 import 'package:background/utils/styles/color_style.dart';
 import 'package:background/utils/styles/text_style.dart';
 import 'package:background/views/painting_screen.dart';
@@ -90,21 +91,11 @@ class _EditImageScreenState extends State<EditImageScreen> {
     super.didChangeDependencies();
     if (listW.isEmpty) {
       var size = MediaQuery.of(context).size;
-      double dx = widget.image!.width! < size.width
-          ? (size.width - widget.image!.width!.toDouble()) / 2
-          : 0;
-      double dy = widget.image!.height! < size.height
-          ? (size.height - widget.image!.height!.toDouble()) / 2
-          : 0;
+      double dx = widget.image!.width! < size.width ? (size.width - widget.image!.width!.toDouble()) / 2 : 0;
+      double dy = widget.image!.height! < size.height ? (size.height - widget.image!.height!.toDouble()) / 2 : 0;
 
       setState(() {
-        listW.add(ItemWidget(
-            type: TypeItem.localImage,
-            image: widget.image!.filePath,
-            dx: dx,
-            dy: dy,
-            width: size.width,
-            height: size.height - 140));
+        listW.add(ItemWidget(type: TypeItem.localImage, image: widget.image!.filePath, dx: dx, dy: dy, width: size.width, height: size.height - 140));
         updateStamps(List.from(List.from(listW)));
       });
 
@@ -192,14 +183,11 @@ class _EditImageScreenState extends State<EditImageScreen> {
                                 ? Container(
                                     margin: const EdgeInsets.fromLTRB(0, 8, 16, 8),
                                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.white, width: 0.5),
-                                        color: Colors.black),
+                                    decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 0.5), color: Colors.black),
                                     alignment: Alignment.center,
                                     child: Text(
                                       "SHARE",
-                                      style: AppTextStyle.styleCaption1(
-                                          fontWeight: FontWeight.w600, textColor: Colors.white),
+                                      style: AppTextStyle.styleCaption1(fontWeight: FontWeight.w600, textColor: Colors.white),
                                     ),
                                   )
                                 : TextButton.icon(
@@ -250,10 +238,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
                                   color: const Color(0xffE1E9F3),
                                   width: size.width,
                                   height: size.height,
-                                  child: Stack(
-                                      children: List<Widget>.generate(
-                                              listW.length, (index) => _itemStack(index, size))
-                                          .toList()),
+                                  child: Stack(children: List<Widget>.generate(listW.length, (index) => _itemStack(index, size)).toList()),
                                 )
 
                                 // ValueListenableBuilder<List<Widget>?>(builder: (context, value, child) {
@@ -368,10 +353,8 @@ class _EditImageScreenState extends State<EditImageScreen> {
         builder: (c, v, _) {
           return v != null && v
               ? Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8), topRight: Radius.circular(8))),
+                  decoration:
+                      const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))),
                   height: 72,
                   child: ListColorView(onChangeColor: (c) {}),
                 )
@@ -386,8 +369,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
           return Center(
             child: v != null && v
                 ? MatrixGestureDetector(
-                    onMatrixUpdate:
-                        (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                    onMatrixUpdate: (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
                       setState(() {
                         this.matrix = matrix;
                       });
@@ -458,13 +440,7 @@ class _EditImageScreenState extends State<EditImageScreen> {
   _onTapDown(TapDownDetails details) {
     var localPosition = details.localPosition;
     setState(() {
-      listW.add(ItemWidget(
-          type: TypeItem.text,
-          image: null,
-          dx: localPosition.dx,
-          dy: localPosition.dy,
-          height: 40,
-          width: 60));
+      listW.add(ItemWidget(type: TypeItem.text, image: null, dx: localPosition.dx, dy: localPosition.dy, height: 40, width: 60));
     });
     updateStamps(List.from(listW));
     bloc!.updateShowAddText();
@@ -562,12 +538,7 @@ class _TabbarTextView extends StatefulWidget {
   final Function(Color) changeColor;
   final Function choiceColor;
 
-  const _TabbarTextView(
-      {Key? key,
-      required this.changeFontSize,
-      required this.changeColor,
-      required this.choiceColor})
-      : super(key: key);
+  const _TabbarTextView({Key? key, required this.changeFontSize, required this.changeColor, required this.choiceColor}) : super(key: key);
 
   @override
   State<_TabbarTextView> createState() => _TabbarTextViewState();
@@ -744,14 +715,11 @@ class _ListFontState extends State<_ListFont> {
             constraints: const BoxConstraints(minWidth: 60),
             padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.fromLTRB(0, 4, 8, 4),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: indexSelected == index ? Colors.black : Colors.white),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: indexSelected == index ? Colors.black : Colors.white),
             alignment: Alignment.center,
             child: Text(
               "Classic $index",
-              style: AppTextStyle.styleFoodnote(
-                  textColor: indexSelected == index ? Colors.white : Colors.black),
+              style: AppTextStyle.styleFoodnote(textColor: indexSelected == index ? Colors.white : Colors.black),
             ),
           ),
         );
@@ -850,15 +818,11 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                       child: Container(
                           key: key,
                           decoration: BoxDecoration(
-                            color:
-                                text.isEmpty ? Colors.black.withOpacity(0.6) : Colors.transparent,
+                            color: text.isEmpty ? Colors.black.withOpacity(0.6) : Colors.transparent,
                           ),
                           height: line > 1 ? (widget.fontSize! + 2) * line : 40,
-                          width: text.isEmpty || text.length * 8 < 60
-                              ? 72.0
-                              : (text.length * 8 > widget.maxSize.width
-                                  ? widget.maxSize.width
-                                  : text.length * 8),
+                          width:
+                              text.isEmpty || text.length * 8 < 60 ? 72.0 : (text.length * 8 > widget.maxSize.width ? widget.maxSize.width : text.length * 8),
                           child: TextField(
                             keyboardType: TextInputType.multiline,
                             maxLength: null,
@@ -880,9 +844,7 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                                   }
                                 }
                                 setState(() {
-                                  line = t.length * 7 ~/ widget.maxSize.width <= 1
-                                      ? 1
-                                      : t.length * 7 ~/ widget.maxSize.width;
+                                  line = t.length * 7 ~/ widget.maxSize.width <= 1 ? 1 : t.length * 7 ~/ widget.maxSize.width;
                                 });
                               }
                             },
@@ -895,10 +857,7 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                                 borderSide: BorderSide(color: Colors.transparent),
                               ),
                             ),
-                            style: TextStyle(
-                                fontFamily: 'SFProDisplay',
-                                color: widget.color ?? Colors.black,
-                                fontSize: widget.fontSize ?? 16),
+                            style: TextStyle(fontFamily: 'SFProDisplay', color: widget.color ?? Colors.black, fontSize: widget.fontSize ?? 16),
                           )),
                     )
                   : Positioned(
@@ -907,10 +866,8 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                       child: Transform(
                         transform: matrix!,
                         child: MatrixGestureDetector(
-                          onMatrixUpdate: (matrix, translationDeltaMatrix, scaleDeltaMatrix,
-                              rotationDeltaMatrix) {
-                            var s = MatrixUtils.transformRect(
-                                matrix, key.currentContext!.findRenderObject()!.paintBounds);
+                          onMatrixUpdate: (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                            var s = MatrixUtils.transformRect(matrix, key.currentContext!.findRenderObject()!.paintBounds);
 
                             RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
                             Offset position = box.localToGlobal(Offset.zero);
@@ -927,21 +884,14 @@ class _ItemTextFieldState extends State<_ItemTextField> {
                           child: Container(
                             key: key,
                             decoration: BoxDecoration(
-                              color:
-                                  text.isEmpty ? Colors.black.withOpacity(0.6) : Colors.transparent,
+                              color: text.isEmpty ? Colors.black.withOpacity(0.6) : Colors.transparent,
                             ),
                             height: line > 1 ? (widget.fontSize! + 2) * line : 40,
-                            width: text.isEmpty || text.length * 8 < 60
-                                ? 72.0
-                                : (text.length * 8 > widget.maxSize.width
-                                    ? widget.maxSize.width
-                                    : text.length * 8),
+                            width:
+                                text.isEmpty || text.length * 8 < 60 ? 72.0 : (text.length * 8 > widget.maxSize.width ? widget.maxSize.width : text.length * 8),
                             child: Text(
                               text,
-                              style: TextStyle(
-                                  fontFamily: 'SFProDisplay',
-                                  color: widget.color ?? Colors.black,
-                                  fontSize: widget.fontSize ?? 16),
+                              style: TextStyle(fontFamily: 'SFProDisplay', color: widget.color ?? Colors.black, fontSize: widget.fontSize ?? 16),
                             ),
                           ),
                         ),
@@ -957,8 +907,7 @@ class _ItemLocalImage extends StatefulWidget {
   final Function(int) onClick;
   final int index;
 
-  const _ItemLocalImage({Key? key, required this.image, required this.onClick, required this.index})
-      : super(key: key);
+  const _ItemLocalImage({Key? key, required this.image, required this.onClick, required this.index}) : super(key: key);
 
   @override
   State<_ItemLocalImage> createState() => _ItemLocalImageState();
@@ -1028,8 +977,7 @@ class _ItemImageWidgetState extends State<_ItemImageWidget> {
               child: Transform(
                 transform: matrix!,
                 child: MatrixGestureDetector(
-                  onMatrixUpdate:
-                      (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
+                  onMatrixUpdate: (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
                     RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
                     Offset position = box.localToGlobal(Offset.zero);
                     setState(() {
@@ -1109,48 +1057,48 @@ class _ItemPaintWidget extends StatefulWidget {
 }
 
 class _ItemPaintWidgetState extends State<_ItemPaintWidget> {
-  Matrix4? matrix = Matrix4.identity();
   final GlobalKey key = GlobalKey();
+  Offset offset = Offset(0, 0);
+  double height = 0;
+  double width = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    setState(() {
+      offset = Offset(widget.dx!, widget.dy!);
+      height = widget.height!;
+      width = widget.width!;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        height: widget.maxSize.height,
-        width: widget.maxSize.width,
-        child: Stack(
-          children: [
-            Positioned(
-              top: widget.dy!,
-              left: widget.dx!,
-              child: Transform(
-                transform: matrix!,
-                child: MatrixGestureDetector(
-                  onMatrixUpdate:
-                      (matrix, translationDeltaMatrix, scaleDeltaMatrix, rotationDeltaMatrix) {
-                    setState(() {
-                      this.matrix = matrix;
-                    });
-                  },
-                  onScaling: (b) {},
-                  child: SizedBox(
-                    key: key,
-                    width: widget.width,
-                    height: widget.height,
-                    child: Image.memory(
-                      widget.image!,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+    return ResizebleWidget(
+      changePosition: (dx, dy){
+        setState(() {
+          offset = Offset(dx, dy);
+        });
+      },
+        onChangeAllSize: (w,h){
+          setState(() {
+            height = w;
+            width = w;
+          });
+        },
+
+        height: height,
+        width: width,
+        position: offset,
+        child: SizedBox(
+          key: key,
+          width: width,
+          height: height,
+          child: Image.memory(
+            widget.image!,
+            fit: BoxFit.cover,
+          ),
         ));
   }
 }
